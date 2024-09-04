@@ -1,4 +1,4 @@
-const Admin = require("../models/admin");
+const Vendor = require("../models/vendor");
 const jwt = require("jsonwebtoken");
 const { UnauthenticatedError } = require("../errors");
 const asyncHandler = require("express-async-handler");
@@ -13,7 +13,7 @@ const auth = asyncHandler(async (req, res, next) => {
   const token = authHeader.split(" ")[1];
   try {
     const payLoad = await jwt.verify(token, process.env.JWT_SECRET);
-    const user = await Admin.findById(payLoad.id);
+    const user = await Vendor.findById(payLoad.id);
     req.user = user;
     next();
   } catch (error) {
