@@ -264,6 +264,10 @@ const ListAllDispatcher = asyncHandler(async (req, res) => {
   });
 });
 
+const assigndispatcherToOrder = asyncHandler(async(req, res) => {
+
+})
+
 module.exports = {
   createAdmin,
   ListAllDispatcher,

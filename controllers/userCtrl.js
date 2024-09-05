@@ -1,5 +1,7 @@
 //require('cookie-parser')
 const User = require("../models/student");
+const Product = require("../models/product")
+const Order = require("../models/order")
 const asyncHandler = require("express-async-handler");
 const {
   NotFoundError,
@@ -61,10 +63,67 @@ const login = asyncHandler(async (req, res) => {
   } else {
     throw new UnauthenticatedError("Invalid credentials");
   }
+})
+
+const createOrder = asyncHandler(async (req, res) => {
+  const { products, dispatcherId, status } = req.body;
+
+  // Validate input
+  if (!Array.isArray(products) || products.length === 0) {
+    return res.status(400).json({
+      status: "Failure",
+      message: "Products are required",
+    });
+  }
+
+  // if (dispatcherId && !mongoose.Types.ObjectId.isValid(dispatcherId)) {
+  //   return res.status(400).json({
+  //     status: "Failure",
+  //     message: "Invalid dispatcher ID",
+  //   });
+  // }
+
+  try {
+    // Check if all products exist
+    const productIds = products.map(p => p.product);
+    const fetchedProducts = await Product.find({ _id: { $in: productIds } });
+    if (fetchedProducts.length !== productIds.length) {
+      return res.status(404).json({
+        status: "Failure",
+        message: "One or more products not found",
+      });
+    }
+
+    // Create new order
+    const newOrder = new Order({
+      //dispatcher: dispatcherId || null, // Default to null if not provided
+      //status: status || "pending", // Default to "pending" if not provided
+      products: products.map(p => ({
+        product: p.product,
+        quantity: p.quantity,
+      })),
+    });
+
+    // Save the order to the database
+    const savedOrder = await newOrder.save();
+
+    res.status(201).json({
+      status: "Success",
+      data: savedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "Failure",
+      message: "Failed to create order",
+      error: error.message, // Include error message for debugging
+    });
+  }
 });
+
 
 
 module.exports = {
   createUser,
-  login
+  login,
+  createOrder
 }

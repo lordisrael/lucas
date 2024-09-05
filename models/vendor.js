@@ -45,6 +45,18 @@ const vendorSchema = new mongoose.Schema({
     required: true,
     trim: true, // Automatically trim leading and trailing spaces
   },
+  total_sales: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
+  completed_sales: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
+  pending_sales: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
 });
 vendorSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

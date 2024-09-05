@@ -37,6 +37,18 @@ const dispatcherSchema = new mongoose.Schema({
     required: true,
     trim: true, // Automatically trim leading and trailing spaces
   },
+  total_dispatches: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
+  completed_dispatches: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
+  pending_dispatch: {
+    type: Number,
+    default: 0, // Default to 0 if not provided
+  },
 });
 
 dispatcherSchema.pre("save", async function (next) {
